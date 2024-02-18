@@ -8,26 +8,30 @@ const HomePage = () => {
   const [discoverMovie, setDiscoverMovie] = useState();
 
   const featMovie = {
-    width: "65%",
-    position: "relative", 
+
+      display: "flex", // Make the container a flex container
+      justifyContent: "center", // Center the image horizontally
+      alignItems: "center", // Center the image vertically
+      width: "100%",
+      position: "relative",
   };
   
-
   const overlayStyle = {
-    position: "absolute", 
-    top: 0,
-    left: 0,
-    width: "100%",
-    height: "99.1%",
-    backgroundColor: "rgba(0, 0, 0, 0.5)", 
+    position: "absolute",
+    top:  0,
+    left:  0,
+    width: "100%", // Ensures the overlay stretches across the full width
+    height: "100%", // Changed from  99.1% to  100% to cover the full height
+    backgroundColor: "rgba(0,  0,  0,  0.5)",
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
-    alignItems: "center",
+    alignItems: "flex-start", // Aligns the text to the left
     color: "white",
     padding: "20px",
     boxSizing: "border-box",
   };
+  
 
   
   const discMovie = () => {
@@ -35,10 +39,28 @@ const HomePage = () => {
       "https://api.themoviedb.org/3/discover/movie?api_key=bc1176d9182b4b78447ac54123a3d34a";
     fetch(url)
       .then((res) => res.json())
-      .then((json) => setDiscoverMovie(json.results[1]))
+      .then((json) => {
+        const movie = json.results[1];
+        // Assuming the movie ID is available in the result
+        const videoUrl = `https://api.themoviedb.org/3/movie/${movie.id}/videos?api_key=bc1176d9182b4b78447ac54123a3d34a`;
+        return fetch(videoUrl)
+          .then((res) => res.json())
+          .then((videoJson) => {
+            // Find the first YouTube trailer
+            const trailer = videoJson.results.find(
+              (video) => video.site === "YouTube" && video.type === "Trailer"
+            );
+            if (trailer) {
+              // Attach the YouTube trailer link to the movie object
+              movie.trailerLink = `https://www.youtube.com/watch?v=${trailer.key}`;
+            }
+            return movie;
+          });
+      })
+      .then((movie) => setDiscoverMovie(movie))
       .catch((error) => console.error("Error fetching movies:", error));
-      
   };
+  
 
   const getMovies = (category) => {
     let url = "";
@@ -106,14 +128,14 @@ const HomePage = () => {
           <h1>{discoverMovie?.title}</h1>
           <h3>{discoverMovie?.release_date}</h3>
           <p>{discoverMovie?.overview}</p>
-          <div style={{ fontSize: '20px', color: 'white' }}>
-            <a href="https://example.com" style={{ textDecoration: 'none', borderColor: 'white', borderRadius: '10px', backgroundColor: 'rgba(0, 0, 0, 0.7)', opacity: '80%', padding: '13px', display: 'flex', justifyContent: 'left'}}>Watch Trailer</a>
+          <div style={{ fontSize: '20px', color: 'white'}}>
+          <a href={discoverMovie?.trailerLink} style={{ textDecoration: 'none', borderColor: 'white', borderRadius: '10px', backgroundColor: 'rgba(0,  0,  0,  0.7)', opacity: '80%', padding: '13px', display: 'flex', justifyContent: 'left', marginTop: '1rem'}}>Watch Trailer</a>
           </div>
         </div>
 
         {/* Header Banner */}
         <img
-          style={{ maxWidth: "100%" }}
+          style={{ maxWidth: "85%"}}
           src={`https://image.tmdb.org/t/p/original${discoverMovie?.backdrop_path}`}
         ></img>
       </div>
@@ -129,6 +151,7 @@ const HomePage = () => {
       >
         <div style={{ marginBottom: "10px" }}>
           <input
+            id ="searchInput"
             type="text"
             placeholder="Search movies..."
             value={searchQuery}
@@ -140,7 +163,7 @@ const HomePage = () => {
               borderColor: "white",
             }}
           />
-          <button onClick={handleSearchSubmit} style={{ marginTop: "15px" }}>
+          <button id={"searchForm"} onClick={handleSearchSubmit} style={{ marginTop: "15px" }}>
             Search
           </button>
         </div>
