@@ -1,19 +1,27 @@
 import React, { useState } from "react";
 import clipAndReplace from "../utils/textReplacer.js";
+import { useNavigate } from 'react-router-dom';
 
-const MovieCard = ({ movie }) => {
+const MovieCard = ({ movie, isFavoritePage, setFavoriteMovies, favoriteMovies }) => {
   const [isHover, setIsHover] = useState(false);
   const [isFavorite, setIsFavorite] = useState(
     JSON.parse(localStorage.getItem(`favorite_${movie.id}`)) || false
   );
 
+  const [likedMovieIds, setLikedMovieIds] = useState(
+    JSON.parse(localStorage.getItem('likedMovieIds')) || []
+  );
+
+  const navigate = useNavigate();
+
+
   const cardStyle = {
     position: "relative",
     width: "300px",
     height: "450px",
-    margin: "0 18px 30px", // Adjusted margin for spacing
+    margin: "0 18px 30px",
     transition: "transform .3s ease",
-    boxShadow: "0   4px   8px rgba(0,0,0,.2)",
+    boxShadow: "0 4px 8px rgba(0,0,0,.2)",
     transform: isHover ? "scale(1.1)" : "scale(1)",
   };
 
@@ -26,7 +34,7 @@ const MovieCard = ({ movie }) => {
     padding: "10px",
     background: "rgba(0, 0, 0, 0.7)",
     color: "#fff",
-    boxSizing: "border-box", // Ensure padding is included in the width and height
+    boxSizing: "border-box",
     display: "flex",
     flexDirection: "column",
     justifyContent: "space-between",
@@ -38,9 +46,9 @@ const MovieCard = ({ movie }) => {
     background: "none",
     border: "none",
     cursor: "pointer",
-    outline: "none", // Remove outline on hover
+    outline: "none",
     transition: "color .3s ease, background .3s ease",
-    alignSelf: "flex-end", // Align like button to the bottom right
+    alignSelf: "flex-end",
   };
 
   const clickMeButtonStyle = {
@@ -49,37 +57,102 @@ const MovieCard = ({ movie }) => {
     background: "none",
     border: "none",
     cursor: "pointer",
-    outline: "none", // Remove outline on hover
+    outline: "none",
     transition: "color .3s ease, background .3s ease",
-    alignSelf: "center", // Align click me button to the center
+    alignSelf: "center",
   };
 
   const hoverStyle = {
-    color: "#000", // Change text color on hover
-    background: "#fff", // Change background color on hover
+    // color: "#000",
+    // background: "#fff",
   };
 
   const activeStyle = {
-    transform: "scale(0.9)", // Change scale on click
+    transform: "scale(0.9)",
   };
 
   const heartStyle = {
-    width: "40px", // Adjust the width and height as needed
+    width: "40px",
     height: "40px",
-    fill: isFavorite ? "#FF4500" : "#fff", // Change fill color based on whether it's liked or not
+    fill: isFavorite ? "#FF4500" : "#fff",
     transition: "fill .3s ease",
   };
 
   const handleLikeButtonClick = () => {
-    const newFavoriteState = !isFavorite;
-    setIsFavorite(newFavoriteState);
-    localStorage.setItem(`favorite_${movie.id}`, JSON.stringify(newFavoriteState));
-  };
+  setIsFavorite((prevIsFavorite) => {
+    const newFavoriteState = !prevIsFavorite;
 
-  const handleClickMeButtonClick = () => {
-    // Implement your click me button click functionality here
-    console.log("Click me button clicked!");
-  };
+    console.log('newFavoriteState:', newFavoriteState);
+    console.log('movie.id:', movie.id);
+
+    setLikedMovieIds((prevLikedMovieIds) => {
+  console.log('prevLikedMovieIds:', prevLikedMovieIds);
+
+  let updatedLikedMovieIds;
+
+  if (newFavoriteState) {
+    if (!prevLikedMovieIds.includes(movie.id)) {
+      
+      updatedLikedMovieIds = [...prevLikedMovieIds, movie.id];
+    } else {
+      
+      updatedLikedMovieIds = prevLikedMovieIds;
+    }
+  } else {
+   
+    updatedLikedMovieIds = prevLikedMovieIds.filter((id) => id !== movie.id);
+  }
+
+  
+  if (newFavoriteState) {
+    
+    const existingLikedMovieIds = JSON.parse(localStorage.getItem('likedMovieIds')) || [];
+
+   
+    const uniqueLikedMovieIds = [...new Set([...existingLikedMovieIds, ...updatedLikedMovieIds])];
+
+    
+    localStorage.setItem('likedMovieIds', JSON.stringify(uniqueLikedMovieIds));
+  } else {
+    
+    localStorage.setItem('likedMovieIds', JSON.stringify(updatedLikedMovieIds));
+  }
+
+  return updatedLikedMovieIds;
+});
+
+    if (isFavoritePage) {
+      setFavoriteMovies((prevFavorites) => {
+        console.log('prevFavorites:', prevFavorites);
+
+        let updatedFavorites;
+
+        if (newFavoriteState) {
+          if (!prevFavorites.find((m) => m.id === movie.id)) {
+            updatedFavorites = [...prevFavorites, { ...movie, isFavorite: newFavoriteState }];
+          } else {
+            updatedFavorites = prevFavorites;
+          }
+        } else {
+          updatedFavorites = prevFavorites.filter((m) => m.id !== movie.id);
+        }
+
+        console.log('updatedFavorites:', updatedFavorites);
+
+        return updatedFavorites;
+      });
+    }
+
+    localStorage.setItem(`favorite_${movie.id}`, JSON.stringify(newFavoriteState));
+
+    return newFavoriteState;
+  });
+};
+
+const handleClickMeButtonClick = () => {
+  navigate(`/movie/${movie.id}`);
+};
+
 
   return (
     <div
@@ -92,7 +165,7 @@ const MovieCard = ({ movie }) => {
       }}
     >
       <img
-        key={movie.id}
+        key={`movie_${movie.id}`} 
         style={{ width: "100%", height: "100%" }}
         src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
         alt={movie.title}
@@ -103,24 +176,37 @@ const MovieCard = ({ movie }) => {
             <h2>{movie.title}</h2>
             <h3>{movie.release_date}</h3>
             <p>{clipAndReplace(movie.overview, 200)}</p>
+            {isFavoritePage 
+            // && movie.backdrop_path 
+            // && (
+            //   <img
+            //     src={`https://image.tmdb.org/t/p/original${movie.backdrop_path}`}
+            //     alt="Backdrop"
+            //     style={{ width: "100%", height: "auto" }}
+            //   />
+            // )
+            }
           </div>
-          
-          {/* Click me button */}
+
           <button
-            style={{ ...clickMeButtonStyle, ...(isHover && hoverStyle), ...(isHover && activeStyle) }}
+            style={{
+              ...clickMeButtonStyle,
+              ...(isHover && hoverStyle),
+              ...(isHover && activeStyle),
+            }}
             onClick={handleClickMeButtonClick}
           >
-            Click me
-          </button>{/* Like button */}
+            More Info
+          </button>
           <button
-            style={{ ...likeButtonStyle, ...(isHover && hoverStyle), ...(isHover && activeStyle) }}
+            style={{
+              ...likeButtonStyle,
+              ...(isHover && hoverStyle),
+              ...(isHover && activeStyle),
+            }}
             onClick={handleLikeButtonClick}
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              style={heartStyle}
-            >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style={heartStyle}>
               <path d="M12 21.35l-1.45-1.32C5.4 14.25 2 11.28 2 7.5 2 4.42 4.42 2 7.5 2c1.74 0 3.41.81 4.5 2.09C15.09 2.81 16.76 2 18.5 2 21.58 2 24 4.42 24 7.5c0 3.78-3.4 6.75-8.55 12.54L12 21.35z" />
             </svg>
           </button>

@@ -10,8 +10,8 @@ const Footer = () => {
             <div style={logoStyle}>
                 <a href="/" style={{ textDecoration: 'none', color: 'inherit' }}>
                     <h1>Clippr</h1>
-                    <p>For educational purposes only.</p>
-                    © 2024 Lexie, Nadia, Rathan. All rights reserved.
+                    <p style={{color: 'white'}}>For educational purposes only.</p>
+                    <p style={{color: 'white'}}>© 2024 Lexie, Nadia, Rathan. All rights reserved.</p>
                 </a>
             </div>
         )
@@ -20,6 +20,7 @@ const Footer = () => {
 const logoStyle = {
     fontSize: '12px',
     textTransform: 'uppercase',
+    color: '#FCD12A',
     padding: '4px',
     margin: '0',
     marginTop: '15px',

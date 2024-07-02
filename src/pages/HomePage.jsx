@@ -9,9 +9,9 @@ const HomePage = () => {
 
   const featMovie = {
 
-      display: "flex", // Make the container a flex container
-      justifyContent: "center", // Center the image horizontally
-      alignItems: "center", // Center the image vertically
+      display: "flex", 
+      justifyContent: "center",
+      alignItems: "center", 
       width: "100%",
       position: "relative",
   };
@@ -20,13 +20,13 @@ const HomePage = () => {
     position: "absolute",
     top:  0,
     left:  0,
-    width: "100%", // Ensures the overlay stretches across the full width
-    height: "100%", // Changed from  99.1% to  100% to cover the full height
+    width: "100%", 
+    height: "100%", 
     backgroundColor: "rgba(0,  0,  0,  0.5)",
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
-    alignItems: "flex-start", // Aligns the text to the left
+    alignItems: "flex-start", 
     color: "white",
     padding: "20px",
     boxSizing: "border-box",
@@ -41,17 +41,17 @@ const HomePage = () => {
       .then((res) => res.json())
       .then((json) => {
         const movie = json.results[1];
-        // Assuming the movie ID is available in the result
+        
         const videoUrl = `https://api.themoviedb.org/3/movie/${movie.id}/videos?api_key=bc1176d9182b4b78447ac54123a3d34a`;
         return fetch(videoUrl)
           .then((res) => res.json())
           .then((videoJson) => {
-            // Find the first YouTube trailer
+         
             const trailer = videoJson.results.find(
               (video) => video.site === "YouTube" && video.type === "Trailer"
             );
             if (trailer) {
-              // Attach the YouTube trailer link to the movie object
+              
               movie.trailerLink = `https://www.youtube.com/watch?v=${trailer.key}`;
             }
             return movie;
@@ -125,7 +125,7 @@ const HomePage = () => {
 
         {/* Overlay */}
         <div style={overlayStyle}>
-          <h1>{discoverMovie?.title}</h1>
+          <h1 style={{marginTop: '22rem'}}>{discoverMovie?.title}</h1>
           <h3>{discoverMovie?.release_date}</h3>
           <p>{discoverMovie?.overview}</p>
           <div style={{ fontSize: '20px', color: 'white'}}>
@@ -135,7 +135,7 @@ const HomePage = () => {
 
         {/* Header Banner */}
         <img
-          style={{ maxWidth: "85%"}}
+          style={{ maxWidth: "75%"}}
           src={`https://image.tmdb.org/t/p/original${discoverMovie?.backdrop_path}`}
         ></img>
       </div>

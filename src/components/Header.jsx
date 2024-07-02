@@ -8,15 +8,15 @@ const Header = () => {
             <nav style={navStyle}>
                 <ul style={ulStyle}>
                     <li style={liStyle}>
-                        <NavLink to="/" style={anchorStyle}>Home</NavLink>
+                        <NavLink to="/clippr-home" style={anchorStyle}>Home</NavLink>
                     </li>
 
                     <li style={liStyle}>
-                        <NavLink to="/about" style={anchorStyle}>About</NavLink>
+                        <NavLink to="/clippr-about" style={anchorStyle}>About</NavLink>
                     </li>
 
                     <li style={liStyle}>
-                        <NavLink to="/favourites" style={anchorStyle}>Favourites</NavLink>
+                        <NavLink to="/clippr-favourites" style={anchorStyle}>Favourites</NavLink>
                     </li>
                 </ul>
             </nav>
@@ -27,14 +27,14 @@ const Header = () => {
 const Logo = () => {
     return (
         <div style={logoStyle}>
-            <a href="/" style={{ textDecoration: 'none', color: 'inherit' }}>
+            <a href="/clippr-home" style={{ textDecoration: 'none', color: '#FCD12A' }}>
                 <h1>Clippr</h1>
             </a>
         </div>
     )
 }
 
-// Define inline styles
+
 const headerStyle = {
     backgroundColor: '#333',
     padding: '10px',
