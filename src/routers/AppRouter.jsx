@@ -12,13 +12,13 @@ import FavouritesPage from '../pages/FavouritesPage';
 
 const AppRouter = () => {
   return (
-    <BrowserRouter basename="clippr-database">
+    <BrowserRouter>
       <Header />
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/clippr-about" element={<AboutPage />} />
-        <Route path="/clippr-movie/:id" element={<MovieInfoPage />} />
-        <Route path="/clippr-favourites" element={<FavouritesPage />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/movie/:id" element={<MovieInfoPage />} />
+        <Route path="/favourites" element={<FavouritesPage />} />
         <Route path="*" element={<p>Error: Page Not Found</p>} />
       </Routes>
       <Footer />

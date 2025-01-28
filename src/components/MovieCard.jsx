@@ -163,7 +163,7 @@ const MovieCard = ({
   };
 
   const handleClickMeButtonClick = () => {
-    navigate(`/clippr-movie/${movie.id}`);
+    navigate(`/movie/${movie.id}`);
   };
 
   return (

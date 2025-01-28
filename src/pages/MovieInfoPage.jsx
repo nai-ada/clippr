@@ -8,6 +8,7 @@ const MovieInfoPage = () => {
     useEffect(() => {
         const fetchMovieDetails = async () => {
             try {
+                // You would not want to embed API keys in the URL like this in production, but this is simply for testing.
                 const response = await fetch(`https://api.themoviedb.org/3/movie/${id}?api_key=bc1176d9182b4b78447ac54123a3d34a`);
                 if (response.ok) {
                     const data = await response.json();
@@ -21,6 +22,7 @@ const MovieInfoPage = () => {
         };
         const fetchMovieCast = async () => {
             try {
+                // You would not want to embed API keys in the URL like this in production, but this is simply for testing.
                 const response = await fetch(`https://api.themoviedb.org/3/movie/${id}/credits?api_key=bc1176d9182b4b78447ac54123a3d34a`);
                 if (response.ok) {
                     const data = await response.json();
